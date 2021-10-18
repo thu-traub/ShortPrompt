@@ -6,9 +6,11 @@ Example:
 
     ...\hsu\projects»
 
-If can display the current git branch as well.
+It can display the current git branch as well.
 
     ...\hsu\projects (master)»
+
+It can synchronize windows "current directory" with powershells "current-location".
 
 To use it, simple source it:
 
