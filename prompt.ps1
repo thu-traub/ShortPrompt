@@ -1,13 +1,14 @@
 <#
 .SYNOPSIS
-A simple truncated prompt for powershell. 
+A simple shortened prompt for powershell. 
 .NOTES
-A simple truncated prompt for powershell. 
-It can display the current git branch as well.
-The prompt is cut to a specified length. The length is given by $global:PromptLength.
-If $global:PromptGit is set to $true, it displays the current git branch as well.
-If $global:PromptSyncCD ist set to $true, it syncronizes powershell's 
+A simple shortened prompt for powershell. 
+It can also display the current Git branch.
+The prompt is cut in length. The length is given by $global:PromptLength.
+If $global:PromptGit is set to $true, it displays the current git branch.
+If $global:PromptSyncCD ist set to $true, it syncronized powershell's 
 current-location with windows current directory.
+If $global:ColorPrompt is set to true, the prompt symbol is displayed in color.
 
 Author: S. Traub
 #>
@@ -31,7 +32,7 @@ function prompt() {
       $gitpresent = $false
       $cl = (Get-Location)
       while (-not ([String]::IsNullOrEmpty($cl)) ) {
-        if (Test-Path ".git") { $gitpresent=$true; break }
+        if (Test-Path "$cl\.git") { $gitpresent=$true; break }
         $cl = Split-Path $cl -Parent
       }
 
@@ -53,7 +54,18 @@ function prompt() {
     }
 
     if ($global:PromptSyncCD) {
-      "$l"+[convert]::ToChar(187)+" "
+      $e=[char]27
+      $pr=[convert]::ToChar(187)
+      if ($ColorPrompt) {
+        if ($PSVersionTable.PSEdition -eq "Core") {
+          $col = "$e[32m$pr$e[0m"
+        } else {
+          $col = "$e[94m$pr$e[0m"
+        }
+      } else {
+        $col = $pr
+      }
+      "$l$col "
       $host.ui.RawUI.WindowTitle = (Get-Location)
     } else {
       "$l> "
@@ -64,3 +76,4 @@ function prompt() {
 $global:PromptLength=16
 $global:PromptSyncCD=$true
 $global:PromptGit=$true
+$global:ColorPrompt=$true
